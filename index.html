@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aim Genetics Lab v3.0 — Multilingual</title>
+    <style>
+        :root {
+            --bg: #06080a;
+            --surface: #0e1117;
+            --accent: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.4);
+            --text: #e2e8f0;
+            --green: #00ff88;
+            --red: #ff4655;
+            --panel: #161b22;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            height: 100vh; overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .container {
+            width: 95vw; max-width: 1000px; height: 90vh;
+            background: var(--surface);
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            display: flex; flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+        }
+
+        .header {
+            padding: 15px 30px; border-bottom: 1px solid #30363d;
+            display: flex; justify-content: space-between; align-items: center;
+            background: #0d1117;
+        }
+
+        .lang-select {
+            background: #1c2128; color: var(--text);
+            border: 1px solid #30363d; padding: 5px 10px;
+            border-radius: 4px; cursor: pointer; outline: none;
+        }
+
+        .progress-container { flex-grow: 1; height: 2px; background: #30363d; margin: 0 20px; position: relative; }
+        #progress-bar { position: absolute; height: 100%; background: var(--accent); width: 0%; transition: 0.3s; box-shadow: 0 0 10px var(--accent); }
+
+        .screen { display: none; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; padding: 40px; animation: fadeIn 0.4s ease; }
+        .screen.active { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .test-zone {
+            width: 100%; height: 400px; background: #010409;
+            border-radius: 8px; border: 1px solid #30363d;
+            position: relative; cursor: crosshair;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+        }
+
+        .symbol { font-size: 5rem; font-weight: bold; user-select: none; pointer-events: none; }
+        
+        @keyframes pulseBeat {
+            0% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0.3; }
+        }
+        .pulse-active { animation: pulseBeat 0.6s infinite ease-in-out; }
+
+        .results-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; }
+        .res-card { background: var(--panel); padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent); }
+        .res-card h4 { margin: 0; font-size: 0.7rem; color: #8b949e; text-transform: uppercase; }
+        .res-card p { margin: 5px 0 0; font-size: 1.3rem; font-weight: bold; color: var(--accent); }
+
+        .report-box {
+            margin-top: 20px; text-align: left; background: #0d1117;
+            padding: 20px; border-radius: 8px; border: 1px solid #30363d;
+            overflow-y: auto; flex-grow: 1; font-size: 0.9rem; line-height: 1.5;
+        }
+
+        /* Стиль для блока ссылок */
+        .social-links {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .social-links a img {
+            border-radius: 4px;
+            transition: transform 0.2s;
+        }
+        .social-links a:hover img {
+            transform: scale(1.05);
+        }
+
+        button {
+            background: var(--accent); color: #000; border: none;
+            padding: 14px 35px; border-radius: 4px; font-weight: bold;
+            cursor: pointer; transition: 0.2s; text-transform: uppercase;
+        }
+        button:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+        .peripheral-target {
+            width: 40px; height: 40px; background: var(--accent);
+            border-radius: 50%; position: absolute; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div style="font-weight: 800;">GENETIC <span style="color:var(--accent)">LAB</span></div>
+        <div class="progress-container"><div id="progress-bar"></div></div>
+        <select class="lang-select" onchange="changeLang(this.value)">
+            <option value="ru">🇷🇺 RU</option>
+            <option value="uk">🇺🇦 UA</option>
+            <option value="en">🇺🇸 EN</option>
+            <option value="tr">🇹🇷 TR</option>
+        </select>
+    </div>
+
+    <div id="sc-start" class="screen active">
+        <h1 data-i18n="main_title">ПОЛНЫЙ ГЕНЕТИЧЕСКИЙ АНАЛИЗ</h1>
+        <p data-i18n="main_desc" style="color: #8b949e; max-width: 500px;">Максимально точное измерение возможностей вашей нервной системы. Без игрового опыта — только биология.</p>
+        <button onclick="nextStep('reflex')" data-i18n="start_btn">НАЧАТЬ ТЕСТ</button>
+        
+        <div class="social-links">
+                    <a href="https://github.com/Adiru3" target="_blank"><img src="https://img.shields.io/badge/GitHub-Adiru3-181717?style=for-the-badge&logo=github" alt="GitHub"></a>
+                    <a href="https://www.youtube.com/@adiruaim" target="_blank"><img src="https://img.shields.io/badge/YouTube-@adiruaim-FF0000?style=for-the-badge&logo=youtube" alt="YouTube"></a>
+                    <a href="https://www.tiktok.com/@adiruhs" target="_blank"><img src="https://img.shields.io/badge/TikTok-@adiruhs-000000?style=for-the-badge&logo=tiktok" alt="TikTok"></a>
+                    <a href="https://donatello.to/Adiru3" target="_blank"><img src="https://img.shields.io/badge/Support-Donatello-orange?style=for-the-badge" alt="Donate"></a>
+                </div>
+            </div>
+
+    <div id="sc-reflex" class="screen">
+        <h2 data-i18n="f1_title">ФАЗА 1: Чистая реакция</h2>
+        <p data-i18n="f1_desc">Кликай ЛКМ моментально при появлении символа.</p>
+        <div class="test-zone" id="zone-reflex"><div id="reflex-target" class="symbol"></div></div>
+    </div>
+
+    <div id="sc-cog" class="screen">
+        <h2 data-i18n="f2_title">ФАЗА 2: Когнитивная селекция</h2>
+        <p data-i18n="f2_desc">Кликай только на ЗЕЛЕНЫЕ объекты. Красные — игнорируй.</p>
+        <div class="test-zone" id="zone-cog"><div id="cog-target" class="symbol"></div></div>
+    </div>
+
+    <div id="sc-jitter" class="screen">
+        <h2 data-i18n="f3_title">ФАЗА 3: Сенсомоторный ритм</h2>
+        <p data-i18n="f3_desc">Кликай точно в момент максимального расширения круга (в такт).</p>
+        <div class="test-zone" id="zone-jitter">
+            <div id="pulsar" style="width:120px; height:120px; border:4px solid var(--accent); border-radius:50%;"></div>
+            <div style="position:absolute; bottom:20px;" id="jitter-count" data-i18n="calibration">Калибровка: 10 кликов</div>
+        </div>
+    </div>
+
+    <div id="sc-peripheral" class="screen">
+        <h2 data-i18n="f4_title">ФАЗА 4: Периферийное зрение</h2>
+        <p data-i18n="f4_desc">Смотрите в центр и кликайте по целям по бокам.</p>
+        <div class="test-zone" id="zone-peri">
+            <div style="font-size: 2rem; color: #333;">+</div>
+            <div id="peri-target-container"></div>
+        </div>
+    </div>
+
+    <div id="sc-anticip" class="screen">
+        <h2 data-i18n="f5_title">ФАЗА 5: Динамический перехват</h2>
+        <p data-i18n="f5_desc">Кликни, когда внешнее кольцо совпадет с внутренним.</p>
+        <div class="test-zone" id="zone-anticip">
+            <div id="anti-base" style="width:80px; height:80px; border:2px solid #333; border-radius:50%; position:relative;">
+                <div id="anti-ring" style="width:100%; height:100%; border:2px solid var(--accent); border-radius:50%; position:absolute; transform: scale(4);"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sc-results" class="screen">
+        <h1 data-i18n="results_title">БИОМЕТРИЧЕСКИЙ ОТЧЕТ</h1>
+        <div class="results-summary" id="res-grid"></div>
+        <div class="report-box" id="full-report"></div>
+        
+        <div class="social-links">
+                    <a href="https://github.com/Adiru3" target="_blank"><img src="https://img.shields.io/badge/GitHub-Adiru3-181717?style=for-the-badge&logo=github" alt="GitHub"></a>
+                    <a href="https://www.youtube.com/@adiruaim" target="_blank"><img src="https://img.shields.io/badge/YouTube-@adiruaim-FF0000?style=for-the-badge&logo=youtube" alt="YouTube"></a>
+                    <a href="https://www.tiktok.com/@adiruhs" target="_blank"><img src="https://img.shields.io/badge/TikTok-@adiruhs-000000?style=for-the-badge&logo=tiktok" alt="TikTok"></a>
+                    <a href="https://donatello.to/Adiru3" target="_blank"><img src="https://img.shields.io/badge/Support-Donatello-orange?style=for-the-badge" alt="Donate"></a>
+                </div>
+            </div>
+
+        <button onclick="location.reload()" style="margin-top:20px; background: #30363d; color: white;" data-i18n="reload_btn">ПЕРЕЗАГРУЗИТЬ СИСТЕМУ</button>
+    </div>
+</div>
+
+<script>
+    // Весь JavaScript остается без изменений (как в вашем файле)
+    const i18n = {
+        ru: {
+            main_title: "ПОЛНЫЙ ГЕНЕТИЧЕСКИЙ АНАЛИЗ",
+            main_desc: "Максимально точное измерение возможностей вашей нервной системы. Без игрового опыта — только биология.",
+            start_btn: "Начать тест",
+            f1_title: "ФАЗА 1: Чистая реакция",
+            f1_desc: "Кликай ЛКМ моментально при появлении символа.",
+            f2_title: "ФАЗА 2: Когнитивная селекция",
+            f2_desc: "Кликай только на ЗЕЛЕНЫЕ объекты. Красные — игнорируй.",
+            f3_title: "ФАЗА 3: Сенсомоторный ритм",
+            f3_desc: "Кликай точно в момент максимального расширения круга (в такт).",
+            calibration: "Калибровка: 10 кликов",
+            f4_title: "ФАЗА 4: Периферийное зрение",
+            f4_desc: "Смотрите в центр (+) и кликайте по целям по бокам.",
+            f5_title: "ФАЗА 5: Динамический перехват",
+            f5_desc: "Кликни, когда внешнее кольцо совпадет с внутренним.",
+            results_title: "БИОМЕТРИЧЕСКИЙ ОТЧЕТ",
+            reload_btn: "Перезагрузить систему",
+            res_neuro: "Нейро-отклик",
+            res_cog: "Когнит. шум",
+            res_var: "Вариативность",
+            res_pot: "Потенциал",
+            report_plus: "Элитная скорость",
+            report_plus_desc: "Ваша нервная система передает сигналы на пределе возможностей.",
+            report_minus: "Средняя скорость",
+            report_minus_desc: "Гены не дают преимущества в реакции. Ставка на позиционирование.",
+            report_jit_plus: "Идеальный ритм",
+            report_jit_plus_desc: "Минимальная вариативность. Идеально для контроля отдачи.",
+            report_jit_minus: "Высокий джиттер",
+            report_jit_minus_desc: "Моторная нестабильность. Рекомендуется Low Sens.",
+            rec_title: "РЕКОМЕНДАЦИЯ",
+            rec_reactor: "Вы — Реактор. Подходят роли снайпера и агрессивные флики.",
+            rec_strat: "Вы — Стратег. Ваша сила в стабильности. Используйте Low Sens."
+        },
+        uk: {
+            main_title: "ПОВНИЙ ГЕНЕТИЧНИЙ АНАЛІЗ",
+            main_desc: "Максимально точне вимірювання можливостей вашої нервової системи. Без ігрового досвіду — тільки біологія.",
+            start_btn: "Почати тест",
+            f1_title: "ФАЗА 1: Чиста реакція",
+            f1_desc: "Клікай ЛКМ миттєво при появі символу.",
+            f2_title: "ФАЗА 2: Когнітивна селекція",
+            f2_desc: "Клікай тільки на ЗЕЛЕНІ об'єкти. Червоні — ігноруй.",
+            f3_title: "ФАЗА 3: Сенсомоторний ритм",
+            f3_desc: "Клікай точно в момент максимального розширення кола (в такт).",
+            calibration: "Калібрування: 10 кліків",
+            f4_title: "ФАЗА 4: Периферичний зір",
+            f4_desc: "Дивіться в центр (+) і клікайте по цілях з боків.",
+            f5_title: "ФАЗА 5: Динамічне перехоплення",
+            f5_desc: "Клікни, коли зовнішнє кільце збігається з внутрішнім.",
+            results_title: "БІОМЕТРИЧНИЙ ЗВІТ",
+            reload_btn: "Перезавантажити систему",
+            res_neuro: "Нейро-відгук",
+            res_cog: "Когніт. шум",
+            res_var: "Варіативність",
+            res_pot: "Потенціал",
+            report_plus: "Елітна швидкість",
+            report_plus_desc: "Ваша нервова система передає сигнали на межі можливостей.",
+            report_minus: "Середня швидкість",
+            report_minus_desc: "Гени не дають переваги в реакції. Ставка на позиціонування.",
+            report_jit_plus: "Ідеальний ритм",
+            report_jit_plus_desc: "Мінімальна варіативність. Ідеально для контролю віддачі.",
+            report_jit_minus: "Високий джиттер",
+            report_jit_minus_desc: "Моторна нестабільність. Рекомендується Low Sens.",
+            rec_title: "РЕКОМЕНДАЦІЯ",
+            rec_reactor: "Ви — Реактор. Підходять ролі снайпера та агресивні фліки.",
+            rec_strat: "Ви — Стратег. Ваша сила у стабільності. Використовуйте Low Sens."
+        },
+        en: {
+            main_title: "FULL GENETIC ANALYSIS",
+            main_desc: "High-precision measurement of your nervous system capabilities. Pure biology, no gaming experience required.",
+            start_btn: "Start Test",
+            f1_title: "PHASE 1: Raw Reaction",
+            f1_desc: "Click LMB instantly when the symbol appears.",
+            f2_title: "PHASE 2: Cognitive Selection",
+            f2_desc: "Click only GREEN objects. Ignore red ones.",
+            f3_title: "PHASE 3: Sensorimotor Rhythm",
+            f3_desc: "Click exactly at the moment of maximum circle expansion.",
+            calibration: "Calibration: 10 clicks",
+            f4_title: "PHASE 4: Peripheral Vision",
+            f4_desc: "Look at the center (+) and click targets on the sides.",
+            f5_title: "PHASE 5: Dynamic Intercept",
+            f5_desc: "Click when the outer ring matches the inner one.",
+            results_title: "BIOMETRIC REPORT",
+            reload_btn: "Reload System",
+            res_neuro: "Neuro-Response",
+            res_cog: "Cognitive Noise",
+            res_var: "Variability",
+            res_pot: "Potential",
+            report_plus: "Elite Speed",
+            report_plus_desc: "Your nervous system transmits signals at the human limit.",
+            report_minus: "Average Speed",
+            report_minus_desc: "Genes don't provide a reaction edge. Focus on positioning.",
+            report_jit_plus: "Perfect Rhythm",
+            report_jit_plus_desc: "Minimal variability. Ideal for recoil control.",
+            report_jit_minus: "High Jitter",
+            report_jit_minus_desc: "Motor instability. Low Sens recommended.",
+            rec_title: "RECOMMENDATION",
+            rec_reactor: "You are a Reactor. Sniper roles and aggressive flicks suit you.",
+            rec_strat: "You are a Strategist. Stability is your strength. Use Low Sens."
+        },
+        tr: {
+            main_title: "TAM GENETİK ANALİZ",
+            main_desc: "Sinir sisteminizin kapasitesinin yüksek hassasiyetli ölçümü. Oyun deneyimi gerekmez, sadece biyoloji.",
+            start_btn: "Teste Başla",
+            f1_title: "FAZ 1: Saf Reaksiyon",
+            f1_desc: "Sembol göründüğünde anında Sol Tık yapın.",
+            f2_title: "FAZ 2: Bilişsel Seçim",
+            f2_desc: "Sadece YEŞİL nesnelere tıklayın. Kırmızıları görmezden gelin.",
+            f3_title: "FAZ 3: Sensörimotor Ritim",
+            f3_desc: "Dairenin en geniş olduğu anda (ritme göre) tıklayın.",
+            calibration: "Kalibrasyon: 10 tık",
+            f4_title: "FAZ 4: Periferik Görüş",
+            f4_desc: "Merkeze (+) bakın ve yanlarda çıkan hedeflere tıklayın.",
+            f5_title: "FAZ 5: Dinamik Müdahale",
+            f5_desc: "Dış halka iç halka ile eşleştiğinde tıklayın.",
+            results_title: "BİYOMETRİK RAPOR",
+            reload_btn: "Sistemi Yeniden Başlat",
+            res_neuro: "Nöro-Yanıt",
+            res_cog: "Bilişsel Gürültü",
+            res_var: "Değişkenlik",
+            res_pot: "Potansiyel",
+            report_plus: "Elit Hız",
+            report_plus_desc: "Sinir sisteminiz sinyalleri insan sınırında iletiyor.",
+            report_minus: "Ortalama Hız",
+            report_minus_desc: "Genler reaksiyon avantajı sağlamıyor. Pozisyon almaya odaklanın.",
+            report_jit_plus: "Mükemmel Ritim",
+            report_jit_plus_desc: "Minimum değişkenlik. Geri tepme kontrolü için ideal.",
+            report_jit_minus: "Yüksek Titreme",
+            report_jit_minus_desc: "Motor dengesizliği. Düşük Hassasiyet (Low Sens) önerilir.",
+            rec_title: "ÖNERİ",
+            rec_reactor: "Siz bir Reaktörsünüz. Keskin nişancı rolleri ve agresif vuruşlar size uygun.",
+            rec_strat: "Siz bir Stratejistsiniz. Gücünüz istikrarda. Low Sens kullanın."
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function changeLang(lang) {
+        currentLang = lang;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (i18n[lang][key]) el.innerText = i18n[lang][key];
+        });
+    }
+
+    const state = { step: 0, reflex: [], cog: [], jitter: [], peripheral: [], anticip: [] };
+
+    function nextStep(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('sc-' + id).classList.add('active');
+        state.step++;
+        updateProgress();
+        if(window[id + 'Start']) window[id + 'Start']();
+    }
+
+    function updateProgress() {
+        document.getElementById('progress-bar').style.width = (state.step / 6 * 100) + '%';
+    }
+
+    function reflexStart() {
+        const zone = document.getElementById('zone-reflex');
+        const target = document.getElementById('reflex-target');
+        target.innerText = "";
+        setTimeout(() => {
+            target.innerText = "◈";
+            const start = performance.now();
+            zone.onmousedown = () => {
+                state.reflex.push(performance.now() - start);
+                zone.onmousedown = null;
+                if(state.reflex.length < 5) reflexStart(); else nextStep('cog');
+            };
+        }, 1200 + Math.random() * 2000);
+    }
+
+    function cogStart() {
+        const zone = document.getElementById('zone-cog');
+        const target = document.getElementById('cog-target');
+        target.innerText = "";
+        setTimeout(() => {
+            const isGreen = Math.random() > 0.4;
+            target.innerText = "■";
+            target.style.color = isGreen ? "var(--green)" : "var(--red)";
+            const start = performance.now();
+            zone.onmousedown = () => {
+                zone.onmousedown = null;
+                if(isGreen) {
+                    state.cog.push(performance.now() - start);
+                    if(state.cog.length < 5) cogStart(); else nextStep('jitter');
+                } else {
+                    state.cog.push(700); 
+                    cogStart();
+                }
+            };
+            if(!isGreen) setTimeout(() => { if(zone.onmousedown) { zone.onmousedown = null; cogStart(); } }, 750);
+        }, 1000 + Math.random() * 1500);
+    }
+
+    function jitterStart() {
+        const pulsar = document.getElementById('pulsar');
+        const zone = document.getElementById('zone-jitter');
+        const counter = document.getElementById('jitter-count');
+        pulsar.classList.add('pulse-active');
+        let clicks = 0;
+        zone.onmousedown = () => {
+            const now = performance.now();
+            const offset = (now % 600);
+            state.jitter.push(Math.abs(offset - 300));
+            clicks++;
+            counter.innerText = `${i18n[currentLang].calibration.split(':')[0]}: ${10 - clicks}`;
+            if(clicks >= 10) { pulsar.classList.remove('pulse-active'); zone.onmousedown = null; nextStep('peripheral'); }
+        };
+    }
+
+    function peripheralStart() {
+        const container = document.getElementById('peri-target-container');
+        container.innerHTML = "";
+        setTimeout(() => {
+            const target = document.createElement('div');
+            target.className = "peripheral-target";
+            const side = Math.random() > 0.5 ? 'left' : 'right';
+            target.style[side] = "50px";
+            target.style.top = (Math.random() * 250 + 50) + "px";
+            const start = performance.now();
+            target.onmousedown = (e) => {
+                e.stopPropagation();
+                state.peripheral.push(performance.now() - start);
+                if(state.peripheral.length < 4) peripheralStart(); else nextStep('anticip');
+            };
+            container.appendChild(target);
+        }, 1000 + Math.random() * 1500);
+    }
+
+    function anticipStart() {
+        const ring = document.getElementById('anti-ring');
+        const zone = document.getElementById('zone-anticip');
+        let scale = 4, active = true;
+        const anim = setInterval(() => {
+            scale -= 0.04;
+            ring.style.transform = `scale(${scale})`;
+            if(scale <= 0) { clearInterval(anim); if(active) anticipStart(); }
+        }, 16);
+        zone.onmousedown = () => {
+            active = false; clearInterval(anim);
+            state.anticip.push(Math.abs(scale - 1) * 100);
+            if(state.anticip.length < 4) anticipStart(); else showFinal();
+        };
+    }
+
+    function showFinal() {
+        nextStep('results');
+        const avgRef = Math.round(state.reflex.reduce((a,b)=>a+b)/state.reflex.length);
+        const avgCog = Math.round(state.cog.reduce((a,b)=>a+b)/state.cog.length);
+        const avgJit = Math.round(state.jitter.reduce((a,b)=>a+b)/state.jitter.length);
+        const score = Math.max(0, 100 - ((avgRef - 160)/2 + avgJit/2 + (avgCog-avgRef)/2));
+
+        const L = i18n[currentLang];
+        document.getElementById('res-grid').innerHTML = `
+            <div class="res-card"><h4>${L.res_neuro}</h4><p>${avgRef}ms</p></div>
+            <div class="res-card"><h4>${L.res_cog}</h4><p>${avgCog - avgRef}ms</p></div>
+            <div class="res-card"><h4>${L.res_var}</h4><p>${avgJit}ms</p></div>
+            <div class="res-card"><h4>${L.res_pot}</h4><p>${Math.round(score)}%</p></div>
+        `;
+
+        let report = `<h3>${L.results_title}</h3>`;
+        if(avgRef < 180) report += `<b class="p-plus">[+] ${L.report_plus}:</b> ${L.report_plus_desc}<br>`;
+        else report += `<b class="p-minus">[-] ${L.report_minus}:</b> ${L.report_minus_desc}<br>`;
+
+        if(avgJit < 40) report += `<b class="p-plus">[+] ${L.report_jit_plus}:</b> ${L.report_jit_plus_desc}<br>`;
+        else report += `<b class="p-minus">[-] ${L.report_jit_minus}:</b> ${L.report_jit_minus_desc}<br>`;
+
+        report += `<br><b>${L.rec_title}:</b><br>${score > 80 ? L.rec_reactor : L.rec_strat}`;
+        document.getElementById('full-report').innerHTML = report;
+    }
+</script>
+</body>
+</html>
